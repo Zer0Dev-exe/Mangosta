@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Cachés de herramientas
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Secretos y configuración local (mangosta guarda la suya en ~/.mangosta,
+# pero por si alguien apunta MANGOSTA_HOME dentro del proyecto)
+.env
+.env.*
+.mangosta/
+config.json
+
+# Exportaciones de datos (mangosta doc export)
+*.jsonl
+export*.json
+
+# Editores y sistema
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
