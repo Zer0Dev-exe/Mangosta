@@ -1,0 +1,81 @@
+name: Release
+
+# Publica un release con ejecutables para Windows, Linux y macOS
+# cada vez que se sube un tag de versión:
+#   git tag v0.1.0 && git push origin v0.1.0
+# (También se puede lanzar a mano desde la pestaña Actions: compila y deja los
+#  ejecutables como artefactos, sin publicar release.)
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset: mangosta-windows-x64.exe
+            exe: mangosta.exe
+          - os: ubuntu-latest
+            asset: mangosta-linux-x64
+            exe: mangosta
+          - os: macos-latest
+            asset: mangosta-macos-arm64
+            exe: mangosta
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[dev,build]"
+
+      - name: Tests
+        run: python -m pytest -q
+
+      - name: Compilar ejecutable
+        run: python scripts/build.py
+
+      - name: Probar ejecutable
+        shell: bash
+        run: |
+          ./dist/${{ matrix.exe }} --version
+          ./dist/${{ matrix.exe }} --help > /dev/null
+
+      - name: Renombrar
+        shell: bash
+        run: mv "dist/${{ matrix.exe }}" "dist/${{ matrix.asset }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: dist/${{ matrix.asset }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Sumas de verificación
+        run: cd dist && sha256sum * > SHA256SUMS.txt
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

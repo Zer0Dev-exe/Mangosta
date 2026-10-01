@@ -18,13 +18,49 @@ y las credenciales de la Admin API (para la seguridad y la infraestructura).
 
 ## Instalación
 
+### Ejecutable (sin Python)
+
+Descarga el de tu sistema desde la [última release](https://github.com/Zer0Dev-exe/Mangosta/releases/latest):
+
+| Sistema | Fichero |
+|---------|---------|
+| Windows | `mangosta-windows-x64.exe` |
+| Linux   | `mangosta-linux-x64` |
+| macOS (Apple Silicon) | `mangosta-macos-arm64` |
+
+**Windows:** renómbralo a `mangosta.exe` y déjalo en una carpeta que esté en el `PATH`
+(por ejemplo `%USERPROFILE%\bin`). Windows SmartScreen puede avisar la primera vez porque
+el ejecutable no está firmado: *Más información → Ejecutar de todas formas*.
+
+**Linux / macOS:**
+
 ```bash
-pip install -e .          # desde esta carpeta
-# o, con pipx, para tenerlo global:
-pipx install .
+chmod +x mangosta-*
+sudo mv mangosta-* /usr/local/bin/mangosta
+xattr -d com.apple.quarantine /usr/local/bin/mangosta   # solo macOS, por Gatekeeper
+```
+
+Cada release incluye `SHA256SUMS.txt` para comprobar la descarga.
+
+### Con Python (3.10+)
+
+```bash
+pipx install git+https://github.com/Zer0Dev-exe/Mangosta.git
+# o, desde una copia del repositorio:
+pip install -e .
 ```
 
 Se instalan dos comandos equivalentes: `mangosta` y el atajo `mgs`.
+
+### Compilar el ejecutable tú mismo
+
+```bash
+pip install -e ".[build]"
+python scripts/build.py        # -> dist/mangosta.exe (o dist/mangosta)
+```
+
+Los releases se publican solos: al subir un tag `v*` (`git tag v0.1.0 && git push origin v0.1.0`)
+GitHub Actions pasa los tests, compila para Windows, Linux y macOS y crea el release.
 
 ## Interfaz interactiva
 
