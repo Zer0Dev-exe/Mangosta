@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="mangosta — gestiona MongoDB desde la terminal">
+  <img src="docs/logo-horizontal.png" alt="mangosta — gestiona MongoDB desde la terminal" width="520">
 </p>
 
 Gestiona MongoDB desde la terminal, igual que desde el panel de MongoDB Atlas:
